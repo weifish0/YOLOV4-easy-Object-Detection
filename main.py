@@ -8,7 +8,7 @@ import matplotlib as plt
 net = cv2.dnn.readNet('./dnn_model/yolov4-tiny.weights', './dnn_model/yolov4-tiny.cfg')
 model = cv2.dnn_DetectionModel(net)
 # 調整 DNN 與 opencv 的基本參數
-model.setInputParams(size = (352,352), scale = 1/255)
+model.setInputParams(size = (416,416), scale = 1/255)
 
 # 模型偵測 txt
 classes = []
@@ -18,12 +18,17 @@ with open("./dnn_model/classes.txt", 'r') as file_object:
         classes.append(class_name)
         
 # 相機刷新
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("./utils/Alisa Stewart Honor Walk.mp4")
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-while True:
+
+
+while cap.isOpened():
     # 解讀相機拍到的圖片
     ret, frame = cap.read()
+    if not ret:
+        print("找不到影像輸入")
+        break
     
     # 物件偵測 (引用訓練好的模型) 
     (class_ids, scores, bboxes) = model.detect(frame)
